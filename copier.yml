@@ -1,0 +1,60 @@
+# Deccansoft project scaffold (standard 2.1.0) — Copier template.
+# Usage:   uvx copier copy --trust --vcs-ref v1.0.0 gh:DeccansoftAITeam/project-scaffold .
+# Update:  uvx copier update --trust --vcs-ref <new-tag>
+_min_copier_version: "9.4"
+_subdirectory: template
+_answers_file: .copier-answers.yml
+_envops:
+  keep_trailing_newline: true
+_skip_if_exists:
+  - AGENTS.md          # project-owned after first generation (L2)
+  - README.md
+  - docs/constitution.md
+
+project_name:
+  type: str
+  help: Product name (e.g. TicketDesk)
+project_slug:
+  type: str
+  help: Lowercase identifier for packages, DB roles, images (letters, digits, underscore)
+  default: "{{ project_name | lower | replace(' ', '_') | replace('-', '_') }}"
+  validator: "{% if not (project_slug | regex_search('^[a-z][a-z0-9_]{1,30}$')) %}Use ^[a-z][a-z0-9_]{1,30}${% endif %}"
+description:
+  type: str
+  help: One-line description
+asvs_level:
+  type: str
+  choices: [L1, L2]
+  default: L2
+  help: ASVS level from the constitution (L2 if PII, auth or multi-tenant)
+multi_tenant:
+  type: bool
+  default: true
+  help: Shared DB with tenant_id + Postgres RLS (ADR template)
+has_ai:
+  type: bool
+  default: true
+  help: LLM features (adds pgvector, prompts/, eval config)
+cloud:
+  type: str
+  choices: [azure]
+  default: azure
+region:
+  type: str
+  default: eastus2
+github_owner:
+  type: str
+  help: GitHub org/user that owns the repo (used in CODEOWNERS)
+agent_bundle_ref:
+  type: str
+  default: v2.1.1
+  help: Pinned org agent-bundle version
+
+_tasks:
+  - command: git init -q -b main
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: uv lock
+    working_directory: backend
+  - command: pnpm install
+  - command: uvx pre-commit install --hook-type pre-commit --hook-type pre-push --hook-type commit-msg
+  - command: python scripts/install_agent_bundle.py {{ agent_bundle_ref }}

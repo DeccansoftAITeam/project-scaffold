@@ -1,0 +1,16 @@
+# Gate and agent config need the Platform/Standards Owner (org rules §3.4).
+* @{{ github_owner }}
+/.agents/                    @{{ github_owner }}
+/.claude/                    @{{ github_owner }}
+/.github/                    @{{ github_owner }}
+/.vscode/settings.json       @{{ github_owner }}
+/.pre-commit-config.yaml     @{{ github_owner }}
+/.copier-answers.yml         @{{ github_owner }}
+/skills-lock.json            @{{ github_owner }}
+/CODEOWNERS                  @{{ github_owner }}
+/docs/constitution.md        @{{ github_owner }}
+# High-risk paths: 2 approvals incl. Tech Lead (enforced by ruleset + this file)
+/backend/migrations/         @{{ github_owner }}
+/backend/app/features/auth/  @{{ github_owner }}
+/backend/app/core/db.py      @{{ github_owner }}
+/infra/                      @{{ github_owner }}

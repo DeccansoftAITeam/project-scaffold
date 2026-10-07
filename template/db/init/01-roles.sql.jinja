@@ -1,0 +1,15 @@
+-- Local/CI only (docker compose). Cloud environments create the same roles via infra/.
+-- owner: owns tables, runs migrations.   app: runtime role, NOT owner, NOBYPASSRLS.
+CREATE ROLE {{ project_slug }}_owner LOGIN PASSWORD 'owner' NOBYPASSRLS;
+CREATE ROLE {{ project_slug }}_app   LOGIN PASSWORD 'app'   NOBYPASSRLS;
+CREATE DATABASE {{ project_slug }} OWNER {{ project_slug }}_owner;
+\connect {{ project_slug }}
+ALTER SCHEMA public OWNER TO {{ project_slug }}_owner;
+GRANT USAGE ON SCHEMA public TO {{ project_slug }}_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE {{ project_slug }}_owner IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO {{ project_slug }}_app;
+ALTER DEFAULT PRIVILEGES FOR ROLE {{ project_slug }}_owner IN SCHEMA public
+  GRANT USAGE, SELECT ON SEQUENCES TO {{ project_slug }}_app;
+{%- if has_ai %}
+CREATE EXTENSION IF NOT EXISTS vector;
+{%- endif %}

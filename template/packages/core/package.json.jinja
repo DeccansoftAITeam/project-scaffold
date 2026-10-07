@@ -1,0 +1,9 @@
+{
+  "name": "@{{ project_slug | replace('_', '-') }}/core",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": { "typecheck": "tsc --noEmit -p ." },
+  "devDependencies": { "typescript": "7.0.2" }
+}

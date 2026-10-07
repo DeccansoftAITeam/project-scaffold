@@ -1,0 +1,10 @@
+# {{ project_name }}
+
+{{ description }}
+
+Generated from [`DeccansoftAITeam/project-scaffold`](https://github.com/DeccansoftAITeam/project-scaffold) (see `.copier-answers.yml`). Agents: read `AGENTS.md`.
+
+```sh
+docker compose up -d db
+cd backend && uv sync && uv run alembic upgrade head && uv run pytest -q
+```
