@@ -50,11 +50,18 @@ agent_bundle_ref:
   default: v2.1.1
   help: Pinned org agent-bundle version
 
+# Tasks run on first generation only. On `copier update`, Copier also renders the OLD
+# version in a temp dir, where these would fail; the `scaffold` skill runs the
+# equivalent steps after an update (uv lock, pnpm install, install_agent_bundle.py).
 _tasks:
   - command: git init -q -b main
     when: "{{ _copier_operation == 'copy' }}"
   - command: uv lock
     working_directory: backend
+    when: "{{ _copier_operation == 'copy' }}"
   - command: pnpm install
+    when: "{{ _copier_operation == 'copy' }}"
   - command: uvx pre-commit install --hook-type pre-commit --hook-type pre-push --hook-type commit-msg
+    when: "{{ _copier_operation == 'copy' }}"
   - command: python scripts/install_agent_bundle.py {{ agent_bundle_ref }}
+    when: "{{ _copier_operation == 'copy' }}"
