@@ -45,9 +45,15 @@ region:
 github_owner:
   type: str
   help: GitHub org/user that owns the repo (used in CODEOWNERS)
+code_owners:
+  type: str
+  default: "@{{ github_owner }}"
+  help: >-
+    Space-separated owners for gate/agent config and high-risk paths. Use at least two
+    people: the person who prompted an agent can't be the only approver (separation of duties).
 agent_bundle_ref:
   type: str
-  default: v2.1.1
+  default: v2.1.2
   help: Pinned org agent-bundle version
 
 # Tasks run on first generation only. On `copier update`, Copier also renders the OLD
