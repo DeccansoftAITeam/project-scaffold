@@ -10,7 +10,9 @@ async def test_nul_in_query_is_422_problem(client: httpx.AsyncClient) -> None:
 
 
 async def test_nul_in_json_body_is_rejected_before_routing(client: httpx.AsyncClient) -> None:
-    r = await client.post("/healthz", content=b'{"x": "a\u0000b"}', headers={"content-type": "application/json"})
+    r = await client.post(
+        "/healthz", content=b'{"x": "a\u0000b"}', headers={"content-type": "application/json"}
+    )
     assert r.status_code == 422  # not 405: the guard runs before any route
 
 
