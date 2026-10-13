@@ -25,7 +25,7 @@ Prerequisites: git, Python 3.12+, uv, Node 22+, pnpm, Docker, access to `Deccans
 | Web | Next.js 16 + TypeScript + Vitest; `/api` proxied to the backend | — |
 | Local DB | `docker compose up -d db` (Postgres 17 + pgvector, roles from `db/init/`) | — |
 | LOCAL gate | `.pre-commit-config.yaml`, **auto-installed**: gitleaks, ruff, hygiene, conventional commits; pre-push: mypy strict, tests + 80% coverage, Nx affected typecheck/test, squawk, file length, public env check (~45 s warm) | AD-08 |
-| PR gate | `.github/workflows/pr-gate.yml` (v1 subset: hygiene, backend, web) | P5 |
+| PR gate | `.github/workflows/pr-gate.yml` v2 (since v1.1): `hygiene` (+ public-env, PR title, agent attribution), `backend` (+ squawk, Schemathesis contract fuzzing, oasdiff breaking-change check with an `api-breaking-approved` label override), `security` (semgrep, pip-audit, pnpm audit), `web` | P5 |
 | Agent guardrails | `.claude/settings.json` (deny/ask lists, bundle plugin pinned), `.vscode/settings.json` (Copilot terminal rules), `CODEOWNERS` | 03 |
 | Agent bundle | Post-generation install of `agent-bundle` at a pinned ref (skills, org rules, Copilot agents and hooks) | L1–L5 |
 | Docs | All SDLC templates in `docs/templates/`; `AGENTS.md` skeleton | — |
@@ -34,7 +34,7 @@ Prerequisites: git, Python 3.12+, uv, Node 22+, pnpm, Docker, access to `Deccans
 
 | Release | Adds | Course module |
 |---|---|---|
-| v1.1 | Full PR gate: contract tests, migration safety, mutation, security, e2e-smoke, agent attribution, conformance | M6 |
+| **v1.1** ✅ | PR gate v2 (above); every local check re-run in CI; RFC 7807 errors documented in OpenAPI; NUL guard; no slash redirects. Mutation moves to nightly (v1.3); e2e-smoke and conformance follow with the web slice | M6 |
 | v1.2 | Preview environments + `infra/` (OpenTofu, Azure Container Apps) | M6 |
 | v1.3 | Nightly + weekly workflows, unattended agent jobs | M8 |
 | v1.4 | Release workflow (release-please, signing, SBOM), deploy scripts | M9–M10 |
