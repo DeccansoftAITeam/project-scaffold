@@ -16,7 +16,9 @@ if curl -fs "$base/healthz" >/dev/null 2>&1; then
   exit 2
 fi
 
-(cd backend && JWT_EPHEMERAL_KEY=true uv run uvicorn app.main:app --port "$port" >"$log" 2>&1) &
+# exec: $api is uv itself, so the trap stops it (uv forwards SIGTERM to uvicorn). Without it,
+# killing the subshell orphaned `uv run`, which kept the uv cache locked and failed CI cleanup.
+(cd backend && JWT_EPHEMERAL_KEY=true exec uv run uvicorn app.main:app --port "$port" >"$log" 2>&1) &
 api=$!
 trap 'kill $api 2>/dev/null || true' EXIT
 for _ in $(seq 1 60); do curl -fs "$base/healthz" >/dev/null && break; sleep 1; done
