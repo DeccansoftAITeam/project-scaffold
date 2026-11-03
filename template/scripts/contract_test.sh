@@ -39,7 +39,8 @@ for k, v in json.loads(sys.argv[1]).get("path", {}).items():
     print(f"\"path.{k}\" = \"{v}\"")' "$seed" > schemathesis.toml
 fi
 status=0
-PYTHONUTF8=1 uvx schemathesis@4 run "$base/openapi.json" "${args[@]}" || status=$?
+# hypothesis 6.169+ breaks schemathesis 4.32 ("'many' object has no attribute 'more'").
+PYTHONUTF8=1 uvx --with "hypothesis<6.169" schemathesis@4 run "$base/openapi.json" "${args[@]}" || status=$?
 rm -f schemathesis.toml
 if [ "$status" -ne 0 ]; then echo "--- API log (last 60 lines) ---"; tail -60 "$log"; fi
 exit "$status"
